@@ -4,6 +4,14 @@
 
 This boilerplate project provides a sample and ready-to-use template for end-to-end (e2e) and UI test automation using Mocha and WebdriverIO v8. As a QA Engineer, you can use this project to get started with UI testing quickly and efficiently.
 
+**What You Need to Get Started**
+To get started with UI test automation using WebdriverIO, you'll need:
+
+-   Node.js and npm installed on your system
+-   A basic understanding of JavaScript and UI testing concepts
+-   Familiarity with WebdriverIO and Mocha (optional, but recommended)
+-   A browser installed on your system (Chrome)
+
 **Features**
 
 -   WebdriverIO v8
