@@ -1,0 +1,14 @@
+# node
+#
+node_modules
+
+#Git
+.git
+
+#VSCode
+.vscode
+
+#custom
+logs/
+errorshots/
+rerun/

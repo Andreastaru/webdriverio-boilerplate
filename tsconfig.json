@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "types": [
+            "node",
+            "@wdio/globals/types",
+            "@wdio/mocha-framework",
+            "expect-webdriverio",
+            "@types/mocha"
+        ],
+
+        "outDir": "./.tsbuild/",
+        "target": "ES6",
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": false,
+        "module": "commonjs",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true
+    },
+
+    "include": ["./config/**/*.ts", "./test/**/*.ts"]
+}
