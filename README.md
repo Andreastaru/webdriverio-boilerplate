@@ -23,7 +23,7 @@ The project is organized into the following folders and files:
 
 -   `specs`: Contains the test specifications
 -   `pageobjects`: Contains the page object models
--   `wdio.conf.js`: The WebdriverIO configuration file
+-   `wdio.shared.conf.ts`: The WebdriverIO configuration file
 -   `package.json`: The project dependencies and scripts
 
 **How to Start**
