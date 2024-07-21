@@ -3,10 +3,6 @@
     "version": "1.0.0",
     "description": "Boilerplate for running tests against your website using Chromedriver",
     "main": "index.js",
-    "engines": {
-        "node": ">=16.13.2 <17.0.0",
-        "npm": ">=8.1.2"
-    },
     "scripts": {
         "test": "wdio ./config/wdioconfig/browser/wdio.chrome.conf.ts --spec test/specs/test.spec.ts"
     },
