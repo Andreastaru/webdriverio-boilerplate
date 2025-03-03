@@ -5,11 +5,12 @@ import logger from '../services/logger';
  * that is shared across all page objects
  */
 export default class Page {
-    private errorMessage: string = 'Element is not found with such label: ';
+    private readonly errorMessage: string =
+        'Element is not found with such label: ';
 
     // DOM shared tags
-    private anchor: string = 'a';
-    private input: string = 'input';
+    private readonly anchor: string = 'a';
+    private readonly input: string = 'input';
     button: string = 'button';
 
     async open(path: string) {
@@ -42,7 +43,7 @@ export default class Page {
             });
         } catch (error) {
             const selector: string = element.selector.toString();
-            await logger.info(
+            logger.info(
                 `Element did not appear within ${timeout}ms: ${selector} `
             );
             await driver.saveScreenshot(`./errorshots/${selector}.png`);
@@ -176,7 +177,7 @@ export default class Page {
         const isExisting: boolean = await element.isExisting();
         if (isExisting) {
             await this.clickElement(element);
-            await logger.info(
+            logger.info(
                 `Setting value "${value}" to field with selector "${element.selector}"`
             );
             await element.setValue(value);
@@ -194,7 +195,7 @@ export default class Page {
         });
         if (isExisting) {
             await this.clickElement(element);
-            await logger.info(
+            logger.info(
                 `Setting value "${value}" to field with selector "${element.selector}"`
             );
             await element.setValue(JSON.stringify(value));
@@ -279,14 +280,12 @@ export default class Page {
     }
 
     async selectFirstOption(element: WebdriverIO.Element): Promise<void> {
-        await logger.info('Choosing first element from the drop-down');
+        logger.info('Choosing first element from the drop-down');
         await this.clickElement(element);
         await this.sleep(); // Waiting for options to load, some cases front-end triggers api and it takes little time
         await browser.keys('ArrowDown');
         await browser.keys('Enter');
-        await logger.debug(
-            `Selected option named as: ${await element.getText()}`
-        );
+        logger.debug(`Selected option named as: ${await element.getText()}`);
     }
 
     async typeSomethingAndSelectFirstOption(
@@ -296,8 +295,6 @@ export default class Page {
         await element.setValue(textOrNumber);
         await this.sleep(); // Waiting for options to load, some cases front-end triggers api and it takes little time
         await browser.keys('Enter');
-        await logger.debug(
-            `Selected option named as: ${await element.getValue()}`
-        );
+        logger.debug(`Selected option named as: ${await element.getValue()}`);
     }
 }
