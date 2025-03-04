@@ -30,10 +30,10 @@ export default class Page {
         elementToWait?: any
     ): Promise<boolean | void> {
         const element: WebdriverIO.Element =
-            elementToWait !== undefined
-                ? elementToWait
-                : await $(elementToWait);
-        logger.info(`Waiting for element to be displayed: ${element.selector}`);
+            elementToWait !== undefined ? elementToWait : $(elementToWait);
+        logger.info(
+            `Waiting for element to be displayed: ${JSON.stringify(element.selector)}`
+        );
 
         try {
             return await element.waitForDisplayed({
@@ -42,7 +42,7 @@ export default class Page {
                 interval: interval,
             });
         } catch (error) {
-            const selector: string = element.selector.toString();
+            const selector: string = JSON.stringify(element.selector);
             logger.info(
                 `Element did not appear within ${timeout}ms: ${selector} `
             );
@@ -63,9 +63,21 @@ export default class Page {
         element: WebdriverIO.Element,
         timeout: number = 10000
     ): Promise<boolean | void> {
-        await element.waitUntil(() => element.isDisplayedInViewport(), {
-            timeout,
-        });
+        await element.waitUntil(
+            async () => {
+                const isInViewport = await element.isDisplayedInViewport();
+                if (isInViewport) {
+                    logger.info(
+                        `${JSON.stringify(element.selector)} is in the viewport`
+                    );
+                }
+                return isInViewport;
+            },
+            {
+                timeout,
+                timeoutMsg: `${JSON.stringify(element.selector)} is not shown in the viewport`,
+            }
+        );
     }
 
     async userScrollsIntoView(element: WebdriverIO.Element) {
@@ -80,13 +92,28 @@ export default class Page {
     ): Promise<boolean> {
         const isExisting = await element.isExisting();
         const elementsText = await element.getText();
+        const elementIsInTheViewport = await element.isDisplayedInViewport();
 
-        logger.info(`Clicking on element with selector: ${element.selector}`);
+        logger.info(
+            `Clicking on element with selector: ${JSON.stringify(element.selector)}`
+        );
 
         if (isExisting) {
-            await browser.execute(el => el.click(), element); // Selenium has default behaviour of scrollIntoView so i needed to find a workaround to let the page navigate user.
-            if (sleepTime) await this.sleep(sleepTime);
-            logger.debug(` Element (with text) is clicked: ${elementsText}`);
+            if (!elementIsInTheViewport) {
+                logger.debug(
+                    `Scrolling to the element ${JSON.stringify(element.selector)}`
+                );
+                element.scrollIntoView();
+            }
+            await element.click();
+            if (sleepTime) {
+                await this.sleep(sleepTime);
+            }
+            if (elementsText) {
+                logger.debug(
+                    ` Element (with text) is clicked: ${elementsText}`
+                );
+            }
         }
 
         return isExisting;
@@ -95,7 +122,7 @@ export default class Page {
     async getElementText(element: WebdriverIO.Element): Promise<string> {
         const elementText = await element.getText();
         logger.info(
-            `Element with selector ${element.selector} has text: ${elementText}`
+            `Element with selector ${JSON.stringify(element.selector)} has text: ${elementText}`
         );
         return elementText;
     }
@@ -138,7 +165,7 @@ export default class Page {
                 (await element.isDisplayedInViewport())
             ) {
                 logger.debug(
-                    ` Returning found by label "${label}" element with id "${elements.indexOf(element)}". Its selector is "${element.selector}"`
+                    ` Returning found by label "${label}" element with id "${elements.indexOf(element)}". Its selector is "${JSON.stringify(element.selector)}"`
                 );
                 return element;
             }
@@ -178,7 +205,7 @@ export default class Page {
         if (isExisting) {
             await this.clickElement(element);
             logger.info(
-                `Setting value "${value}" to field with selector "${element.selector}"`
+                `Setting value "${value}" to field with selector ${JSON.stringify(element.selector)}`
             );
             await element.setValue(value);
         }
@@ -196,7 +223,7 @@ export default class Page {
         if (isExisting) {
             await this.clickElement(element);
             logger.info(
-                `Setting value "${value}" to field with selector "${element.selector}"`
+                `Setting value "${JSON.stringify(value)}" to field with selector "${JSON.stringify(element.selector)}"`
             );
             await element.setValue(JSON.stringify(value));
         }
@@ -254,7 +281,7 @@ export default class Page {
         if (isExisting) {
             await this.clearInputValue(element);
             logger.info(
-                `Setting value "${value}" to the element: ${element.selector}`
+                `Setting value "${value}" to the element: ${JSON.stringify(element.selector)}`
             );
             await element.setValue(value);
         }
@@ -265,7 +292,9 @@ export default class Page {
         let isCleared: boolean = false;
         const keysArray: string[] = ['Control', 'a', 'Control', 'Delete'];
         if (await this.clickElement(element)) {
-            logger.info(`Clearing value of the element ${element.selector}`);
+            logger.info(
+                `Clearing value of the element ${JSON.stringify(element.selector)}`
+            );
             await browser.keys(keysArray);
             isCleared = true;
         }

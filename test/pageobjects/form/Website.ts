@@ -35,23 +35,23 @@ class Website extends Page {
         return $('#SUCCESS');
     }
 
-    async navigateToTheAboutSection() {
+    async navigateToTheAboutSection(): Promise<string> {
         await this.navigateOnTheSite();
         await super.clickElement(await this.aboutLink);
         return super.getCurrentUrl();
     }
 
-    async navigateToTheContactSection() {
+    async navigateToTheContactSection(): Promise<string> {
         await super.clickElement(await this.contactLink);
         return super.getCurrentUrl();
     }
 
-    async navigateOnTheSite() {
+    async navigateOnTheSite(): Promise<void> {
         const portfolioWebsite: string = await super.getCurrentUrl();
         logger.debug(`Checking navigation on the site ${portfolioWebsite}`);
     }
 
-    async fillOutTheForm() {
+    async fillOutTheForm(): Promise<void> {
         await super.setValueToElement(
             await this.nameInputField,
             contactFormData.name
@@ -66,9 +66,10 @@ class Website extends Page {
         );
     }
 
-    async submitTheForm() {
-        super.clickElement(await this.submitButton);
-        super.waitForElementIsShown(await this.successText);
+    async submitTheForm(): Promise<string> {
+        await super.clickElement(await this.submitButton);
+        await super.waitForElementIsShown(await this.successText);
+        return (await this.successText).getText();
     }
 }
 
